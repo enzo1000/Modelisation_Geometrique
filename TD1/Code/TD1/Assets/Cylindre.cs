@@ -24,12 +24,12 @@ public class Cylindre : MonoBehaviour
     private void PacMan()
     {
         //Résolution & taille de la sphère
-        int nbParalleles = 15;
-        int nbMeridiens = 15;
-        int radius = 10;
+        int nbParalleles = 19;
+        int nbMeridiens = 19;
+        int radius = 5;
 
         //Angle bouche pac-man
-        float angleTronquage = 40;
+        float angleTronquage = 50;
 
         List<Vector3> points = new List<Vector3>();
         List<int> triangles = new List<int>();
@@ -195,6 +195,19 @@ public class Cylindre : MonoBehaviour
 
                 triangles.AddRange(new int[] { t1, t2, t5 });
                 triangles.AddRange(new int[] { t6, t5, t2 });
+
+                if (i == (-90 + phi))
+                {
+                    triangles.AddRange(new int[] { t1, indSouthPole, t3 });
+                    triangles.AddRange(new int[] { t1, t5, indSouthPole });
+                }
+
+                //Positionnement triangle pole nord
+                if (i >= 90 - (2 * phi))
+                {
+                    triangles.AddRange(new int[] { t2, t4, indNorthPole });
+                    triangles.AddRange(new int[] { t2, indNorthPole, t6 });
+                }
             }
         }
 
