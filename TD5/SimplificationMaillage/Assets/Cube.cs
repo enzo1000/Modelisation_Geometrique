@@ -8,62 +8,52 @@ public class Cube : MonoBehaviour
     public Octree<int> bvh;
 
     private GameObject cube;
+    private List<GameObject> listCube = new List<GameObject>();
+    private List<Vector3> listeVertices = new List<Vector3>();
 
     // Start is called before the first frame update
     void Start()
     {
         Vector3 position = buddha.transform.position;
-        CreateOctree(position, 3.0f, 5);
+        CreateOctree(position, 2.0f, 3);
 
-        parcoursOctree(bvh.GetRoot(), position);    //Noeud racine, position, Rayon sphere (non interressant).
-    }
-
-    //Parcours de l'octree pour mettre en place la simplification de vertex
-    private void parcoursOctree(OctreeNode<int> node, Vector3 center, int nodeDepth = 0)
-    {
-        if (!node.IsLeaf())
+        foreach(GameObject go in listCube)
         {
-            foreach (OctreeNode<int> subNode in node.Nodes)
-            {
-                parcoursOctree(subNode, center, nodeDepth + 1);
-            }
+            evenVertexOctree(go);
         }
-        else
+
+        foreach(var v in listeVertices)
         {
-            evenVertexOctree(node);
+            Debug.Log(v);
         }
     }
 
-    //Fonction qui vient verifier quel points est dans quel cube
-    private void evenVertexOctree(OctreeNode<int> cube)
+    private void evenVertexOctree(GameObject cube)
     {
+        //Liste qui vient stoquer les vertices a fusionner
         List<Vector3> verticesToEven = new List<Vector3>();
-        float minBoundx = cube.Position.x - (cube.Size / 2);
-        float minBoundy = cube.Position.y - (cube.Size / 2);
-        float minBoundz = cube.Position.z - (cube.Size / 2);
-
-        float maxBoundx = cube.Position.x + (cube.Size / 2); 
-        float maxBoundy = cube.Position.y + (cube.Size / 2);
-        float maxBoundz = cube.Position.z + (cube.Size / 2);
+        //Stoque une nouvelle liste avec le nouveau points calcule (si calcule)
+        List<Vector3> newVertices = new List<Vector3>();
 
         //Parcours de tout nos vertex
         foreach (Vector3 vertex in buddha.GetComponent<MeshFilter>().mesh.vertices)
         {
-            //Si vertex dans cube alors
-            if (vertex.x > minBoundx && vertex.y > minBoundy && vertex.z > minBoundz)
+            if (cube.GetComponent<MeshRenderer>().bounds.Contains(vertex))
             {
-                if (vertex.x < maxBoundx && vertex.y < maxBoundy && vertex.z < maxBoundz)
-                {
-                    verticesToEven.Add(vertex);
-                }
+                verticesToEven.Add(vertex);
             }
+        }
+
+        if (verticesToEven.Count > 0)
+        {
+            listeVertices.Add(verticesToEven[0]);
         }
     }
 
     private void CreateOctree(Vector3 position, float taille, int res)
     {
         bvh = new Octree<int>(position, taille, res);
-        //drawAllCubes(bvh.GetRoot(), position);
+        drawAllCubes(bvh.GetRoot(), position);
     }
 
     //nodeDepth utile pour l'appel recursif
@@ -91,6 +81,7 @@ public class Cube : MonoBehaviour
         cube.transform.parent = GameObject.Find("BVH").transform;
         cube.transform.position = center;
         cube.transform.localScale = size;
+        listCube.Add(cube);
     }
 
     //TType est un type generique

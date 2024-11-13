@@ -9,7 +9,7 @@ public class TD2 : MonoBehaviour
     public GameObject buddha;
     public Material buddhaMat;
 
-    void Start()
+    void Awake()
     {
         //Liste de nos points et triangles
         List<Vector3> vertices_ = new List<Vector3>();
