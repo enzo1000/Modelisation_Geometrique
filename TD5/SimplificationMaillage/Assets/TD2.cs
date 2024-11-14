@@ -140,7 +140,8 @@ public class TD2 : MonoBehaviour
             vertices_ [i] = tmp;
         }
     }
-    Vector3[] processNormals(ref List<Vector3> vertices_, ref List<int> triangles_, ref List<Vector3> normals_)
+
+    public static Vector3[] processNormals(ref List<Vector3> vertices_, ref List<int> triangles_, ref List<Vector3> normals_)
     {
         //Parcours des triangles pour avoir la liste des points connexes
         for (int i = 0; i < triangles_.Count; i += 3)
